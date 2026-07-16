@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include "analytical.hpp"
 
 // Constructeur
@@ -20,16 +21,70 @@ Contract OptionEU::price() {
         ret_contract.delta   = normalcumfunction(d1) - 1.0;
     }
 
-    ret_contract.gamma = std::exp(-d1 * d1 / 2.0) / (s * sigma * std::sqrt(2.0 * M_PI * T));
-    ret_contract.vega  = s * std::sqrt(T) * std::exp(-d1 * d1 / 2.0) / std::sqrt(2.0 * M_PI);
-    ret_contract.theta = -(s * sigma * std::exp(-d1 * d1 / 2.0)) / (2.0 * std::sqrt(2.0 * M_PI * T))
-                         - r * k * std::exp(-r * T) * normalcumfunction(iscall ? d2 : -d2);
+    ret_contract.gamma = normaldensityfunction(d1)/(s*sigma*std::sqrt(T));
+    ret_contract.vega  = s * std::sqrt(T) * normaldensityfunction(d1);
+
+    ret_contract.theta = -(s * sigma * normaldensityfunction(d1)) / (2.0 * std::sqrt(T))
+                        - r * k * std::exp(-r * T) * normalcumfunction(iscall ? d2 : -d2);
+
     ret_contract.rho   = iscall
                          ?  k * T * std::exp(-r * T) * normalcumfunction(d2)
                          : -k * T * std::exp(-r * T) * normalcumfunction(-d2);
 
-
-    ret_contract.iv = 0.0*market_price;
-
     return ret_contract;
 }
+
+// implied vol 
+double OptionEU::implied_vol_newton_raphson(double x0, double tolerance, int max_iteration ){
+
+    double sigma_old = this->sigma;
+    double sigma_new(x0);
+
+    for (int i(0); i<max_iteration; ++i){
+
+        //Sigma adjustment
+        this->sigma = sigma_new;
+
+        //Re computation of option metrics
+        this->price();
+
+        // calcul of f
+        double f = this->ret_contract.premium - market_price;
+
+        // calcul of df
+        double df = this->ret_contract.vega;
+
+        // update of ret
+        if (std::abs(df)<1e-12){
+            break;
+        }
+
+        //update of sigma
+        double ratio = f/df;
+        sigma_new = this->sigma - ratio;
+
+        // vol validation
+        if (std::abs(ratio) < tolerance){
+            break;
+        }
+
+    }
+    // setting back initial vol
+    this->sigma = sigma_old;
+    this->ret_contract.iv = sigma_new;
+
+    return sigma_new;
+}
+
+//graphique
+void OptionEU::affiche(){
+    std::cout << " ======= Option Metrics : ======= " << std::endl;
+    std::cout << "Premium : " << ret_contract.premium << std::endl;
+    std::cout << "Delta   : " << ret_contract.delta   << std::endl;
+    std::cout << "Gamma   : " << ret_contract.gamma   << std::endl;
+    std::cout << "Vega    : " << ret_contract.vega    << std::endl;
+    std::cout << "Theta   : " << ret_contract.theta   << std::endl;
+    std::cout << "Rho     : " << ret_contract.rho     << std::endl;
+    std::cout << " ================================ " << std::endl;
+}
+

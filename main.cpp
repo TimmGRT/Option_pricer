@@ -8,12 +8,21 @@ int main() {
 
     Contract result = opt.price();
 
-    std::cout << "Premium : " << result.premium << std::endl;
-    std::cout << "Delta   : " << result.delta   << std::endl;
-    std::cout << "Gamma   : " << result.gamma   << std::endl;
-    std::cout << "Vega    : " << result.vega    << std::endl;
-    std::cout << "Theta   : " << result.theta   << std::endl;
-    std::cout << "Rho     : " << result.rho     << std::endl;
+    opt.affiche();
 
-    return 0;
+    // Calcul de l'iv pour le dernier call pricé à 10.450
+    OptionEU option_2(100.0, 100.0, 0.05, 1.0, 0.20, true, 10.4506);
+
+    option_2.affiche();
+
+    std::cout << "Value of the implied vol for the same contract at Cm = 10.4506 : " << option_2.implied_vol_newton_raphson() << std::endl;
+
+
+    // Calcul de l'iv pour le dernier call pricé à 11
+    OptionEU option_3(100.0, 100.0, 0.05, 1.0, 0.20, true, 11.0);
+
+    option_3.affiche();
+
+    std::cout << "Value of the implied vol for the same contract at Cm = 11.0 : " << option_3.implied_vol_newton_raphson() << std::endl;
+
 }
