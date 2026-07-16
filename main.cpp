@@ -6,8 +6,6 @@ int main() {
     // Exemple: call européen, S=100, K=100, r=5%, T=1an, sigma=20%
     OptionEU opt(100.0, 100.0, 0.05, 1.0, 0.20, true);
 
-    Contract result = opt.price();
-
     opt.affiche();
 
     // Calcul de l'iv pour le dernier call pricé à 10.450
