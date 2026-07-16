@@ -1,14 +1,23 @@
 #include <cmath>
 #include <iostream>
+#include <vector>
+#include <cmath>
 #include "analytical.hpp"
 
-// Constructeur
-OptionEU::OptionEU(double s, double k, double r, double T, double sigma, bool iscall, double market_price)
-    : s(s), k(k), r(r), T(T), sigma(sigma), iscall(iscall), market_price(market_price)
-{}
+// ============================================
+// Option EU pricing BS
+// ============================================
 
-// Calcul Black-Scholes
-Contract OptionEU::price() {
+OptionEUBS::OptionEUBS(double s, double k, double r, double T, double sigma, bool iscall, double market_price)
+: Option(s,k,r,T,sigma,iscall,market_price)
+{
+    price();
+    if (market_price != 0.0) {
+        implied_vol_newton_raphson();
+    }
+}
+
+Contract OptionEUBS::price() {
 
     double d1 = (std::log(s / k) + (r + (sigma * sigma / 2.0)) * T) / (sigma * std::sqrt(T));
     double d2 = d1 - sigma * std::sqrt(T);
@@ -34,8 +43,18 @@ Contract OptionEU::price() {
     return ret_contract;
 }
 
-// implied vol 
-double OptionEU::implied_vol_newton_raphson(double x0, double tolerance, int max_iteration ){
+double OptionEUBS::payoff(const std::vector<double>& spot) const {
+
+        double s_final = spot.back(); 
+
+        if (iscall) {
+            return std::max(s_final - k, 0.0);
+        } else {
+            return std::max(k - s_final, 0.0);
+        }
+}
+
+double OptionEUBS::implied_vol_newton_raphson(double x0, double tolerance, int max_iteration ){
 
     double sigma_old = this->sigma;
     double sigma_new(x0);
@@ -76,16 +95,32 @@ double OptionEU::implied_vol_newton_raphson(double x0, double tolerance, int max
     return sigma_new;
 }
 
-//graphique
-void OptionEU::affiche(){
-    std::cout << " ======= Option Metrics : ======= " << std::endl;
-    std::cout << "Premium : " << (ret_contract.premium < 1e-10 ? 0.0 : ret_contract.premium) << std::endl;
-    std::cout << "Delta   : " << (ret_contract.delta < 1e-10 ? 0.0 : ret_contract.delta) << std::endl;
-    std::cout << "Gamma   : " << (ret_contract.gamma < 1e-10 ? 0.0 : ret_contract.gamma)   << std::endl;
-    std::cout << "Vega    : " << (ret_contract.vega < 1e-10 ? 0.0 : ret_contract.vega) << std::endl;
-    std::cout << "Theta   : " << (ret_contract.theta < 1e-10 ? 0.0 : ret_contract.theta)   << std::endl;
-    std::cout << "Rho     : " << (ret_contract.rho < 1e-10 ? 0.0 : ret_contract.rho) << std::endl;
-    std::cout << " ================================ " << std::endl;
-    std::cout << " Implied vol : " << (ret_contract.iv < 1e-10 ? 0.0 : ret_contract.iv) << std::endl;
-    std::cout << " ================================ " << std::endl;
+// ============================================
+// Option EU pricing MC
+// ============================================
+//constructeur
+OptionEUMC::OptionEUMC(double s, double k, double r, double T, double sigma, bool iscall, double market_price)
+:Option(s,k,r,T,sigma,iscall,market_price)
+{price();}
+
+double OptionEUMC::payoff(const std::vector<double>& spot) const {
+
+        double s_final = spot.back(); 
+
+        if (iscall) {
+            return std::max(s_final - k, 0.0);
+        } else {
+            return std::max(k - s_final, 0.0);
+        }
 }
+
+Contract OptionEUMC::price(){
+
+    ret_contract.premium = MonteCarloPricer(*this, 100000, 1);
+
+    return ret_contract;
+    
+}
+
+
+
