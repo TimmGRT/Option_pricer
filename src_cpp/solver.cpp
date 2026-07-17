@@ -13,15 +13,15 @@ double normaldensityfunction(double x) {
     return (1.0 / std::sqrt(2.0 * M_PI)) * std::exp(-x * x / 2.0);
 }
 
-// Bruit gaussien
-double gaussian_noise(double mu, double stddev) {
-    static std::mt19937 generator(42);
-    static std::normal_distribution<double> distribution(mu, stddev);
-    return distribution(generator);
+// Bruit gaussien — générateur local, pas statique
+double gaussian_noise(std::mt19937& generator) {
+    std::normal_distribution<double> dist(0.0, 1.0);
+    return dist(generator);
 }
 
-// Pricer Monte Carlo générique — fonctionne pour toute sous-classe d'Option
-double MonteCarloPricer(const Option& option, int num_it, int num_step) {
+// Pricer Monte Carlo générique — seed fixe pour reproductibilité
+// Chaque appel repart du même seed → comparaisons entre perturbations cohérentes
+double MonteCarloPricer(const Option& option, int num_it, int num_step, unsigned int seed) {
     double S0          = option.get_s();
     double r           = option.get_r();
     double T           = option.get_T();
@@ -30,6 +30,7 @@ double MonteCarloPricer(const Option& option, int num_it, int num_step) {
     double drift       = (r - 0.5 * sigma * sigma) * dt;
     double vol_sqrt_dt = sigma * std::sqrt(dt);
 
+    std::mt19937 generator(seed);  // repart toujours du même seed
     double total_payoff = 0.0;
 
     for (int i = 0; i < num_it; ++i) {
@@ -39,7 +40,7 @@ double MonteCarloPricer(const Option& option, int num_it, int num_step) {
         path.push_back(S0);
 
         for (int t = 1; t <= num_step; ++t) {
-            double z = gaussian_noise(0.0, 1.0);
+            double z = gaussian_noise(generator);
             S = S * std::exp(drift + vol_sqrt_dt * z);
             path.push_back(S);
         }

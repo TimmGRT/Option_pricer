@@ -1,5 +1,5 @@
 #include <cmath>
-#include "EUOption.hpp"
+#include "european_option.hpp"
 
 // ============================================
 // OptionEUBS — Black-Scholes analytique

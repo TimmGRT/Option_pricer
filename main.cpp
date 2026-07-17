@@ -1,5 +1,7 @@
 #include <iostream>
-#include "EUOption.hpp"
+#include "european_option.hpp"
+#include "asian_option.hpp"
+
 
 int main() {
 
@@ -18,4 +20,9 @@ int main() {
     // ---- Monte Carlo + grecs par différences finies ----
     OptionEUMC opt_MC(100.0, 100.0, 0.05, 1.0, 0.20, true);
     opt_MC.affiche();
+
+    // Option asiatique
+    OptionAsian opt_as(100.0, 100.0, 0.05, 1.0, 0.20, true, false);
+    opt_as.affiche();
+    
 }

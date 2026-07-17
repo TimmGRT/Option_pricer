@@ -12,7 +12,7 @@ void Option::greeks_finite_diff(double dS, double dsigma, double dT, double dr) 
     // Delta et Gamma: variation of S
     s += dS;  premium();  double V_up   = ret_contract.premium;
     s -= 2.0 * dS;  premium();  double V_down = ret_contract.premium;
-    s += dS; 
+    s += dS;
 
     ret_contract.delta = (V_up - V_down) / (2.0 * dS);
 
@@ -26,14 +26,14 @@ void Option::greeks_finite_diff(double dS, double dsigma, double dT, double dr) 
 
     ret_contract.vega = (V_sig_up - V_sig_down) / (2.0 * dsigma);
 
-    // Theta variation of time
+    // Theta: variation of time
     premium();  double V_center = ret_contract.premium;
     T -= dT;  premium();  double V_T_down = ret_contract.premium;
     T += dT;
 
     ret_contract.theta = (V_T_down - V_center) / dT;
 
-    // RHo variation of rates
+    // Rho: variation of rates
     r += dr;  premium();  double V_r_up   = ret_contract.premium;
     r -= 2.0 * dr;  premium();  double V_r_down = ret_contract.premium;
     r += dr;
