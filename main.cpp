@@ -1,5 +1,5 @@
 #include <iostream>
-#include "analytical.hpp"
+#include "EUOption.hpp"
 
 int main() {
 
@@ -16,7 +16,6 @@ int main() {
     option_3.affiche();
 
     // ---- Monte Carlo + grecs par différences finies ----
-    // Les grecs MC doivent être proches des grecs BS ci-dessus
     OptionEUMC opt_MC(100.0, 100.0, 0.05, 1.0, 0.20, true);
     opt_MC.affiche();
 }

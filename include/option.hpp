@@ -19,7 +19,7 @@ protected:
     double r;
     double T;
     double sigma;
-    bool   iscall;
+    bool iscall;
     double market_price;
 
     Contract ret_contract;
@@ -33,11 +33,11 @@ public:
     virtual ~Option() = default;
 
     // Getters
-    double get_s()      const { return s; }
-    double get_k()      const { return k; }
-    double get_r()      const { return r; }
-    double get_T()      const { return T; }
-    double get_sigma()  const { return sigma; }
+    double get_s() const { return s; }
+    double get_k() const { return k; }
+    double get_r() const { return r; }
+    double get_T() const { return T; }
+    double get_sigma() const { return sigma; }
     bool   get_iscall() const { return iscall; }
 
     // payoff in function of the spot
