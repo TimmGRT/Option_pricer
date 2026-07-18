@@ -5,6 +5,8 @@
 class OptionAsian : public Option {
 protected:
     bool floating_strike;
+    int  num_it_   = 100000;  //simulations pour le premium
+    int  num_step_ = 252;     //jours de trading)
 
 public:
     OptionAsian(double s, double k, double r, double T, double sigma,

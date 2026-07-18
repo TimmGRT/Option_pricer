@@ -23,6 +23,9 @@ public:
 // EU Option Monte Carlo
 // ============================================
 class OptionEUMC : public Option {
+protected:
+    int num_it_ = 100000;
+
 public:
     OptionEUMC(double s, double k, double r, double T, double sigma,
                bool iscall = true, double market_price = 0.0);

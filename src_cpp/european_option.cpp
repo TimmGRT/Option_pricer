@@ -84,7 +84,8 @@ OptionEUMC::OptionEUMC(double s, double k, double r, double T, double sigma,
                        bool iscall, double market_price)
     : Option(s, k, r, T, sigma, iscall, market_price)
 {
-    price();
+    premium();
+    greeks();
 }
 
 double OptionEUMC::payoff(const std::vector<double>& spot) const {
@@ -94,14 +95,13 @@ double OptionEUMC::payoff(const std::vector<double>& spot) const {
 }
 
 void OptionEUMC::premium() {
-    ret_contract.premium = MonteCarloPricer(*this, 100000, 1);
+    ret_contract.premium = MonteCarloPricer(*this, num_it_, 1);
 }
 
 void OptionEUMC::greeks() {
-    // Perturbations plus larges pour compenser le bruit du MC
+    num_it_ = 10000;
     greeks_finite_diff(1.0, 0.01, 1.0 / 52.0, 0.001);
+    num_it_ = 100000;
 }
-
-
 
 
