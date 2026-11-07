@@ -1,18 +1,18 @@
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude
+CXX      = g++
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -Iinclude
 
-SRCS   = src_cpp/solver.cpp src_cpp/european_option.cpp main.cpp src_cpp/option.cpp src_cpp/asian_option.cpp src_cpp/asian_option.cpp
+SRCS   = main.cpp src_cpp/option.cpp src_cpp/solver.cpp src_cpp/european_option.cpp src_cpp/asian_option.cpp
+TARGET = pricer
 
-# permet de verifier si ça compile
-all: pricer 
+.PHONY: all run clean
 
-# permet de comme avant compiler
-pricer : src_cpp/solver.cpp src_cpp/european_option.cpp src_cpp/option.cpp main.cpp src_cpp/asian_option.cpp
-	$(CXX) $(CXXFLAGS) src_cpp/solver.cpp src_cpp/option.cpp src_cpp/european_option.cpp main.cpp src_cpp/asian_option.cpp -o pricer
+all: $(TARGET)
 
-# permet de compiler et d'executer
-run : pricer 
-	./pricer
+$(TARGET): $(SRCS) $(wildcard include/*.hpp)
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET)
 
-clean: # supprime la precedente compilation 
-	rm -f pricer 
+run: $(TARGET)
+	./$(TARGET)
+
+clean:
+	rm -f $(TARGET)
