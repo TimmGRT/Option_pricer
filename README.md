@@ -20,13 +20,17 @@ Adding a new product only requires defining its payoff. The engine, the Greeks a
 
 Under the risk-neutral measure the underlying follows geometric Brownian motion,
 
-$$dS_t = r S_t\,dt + \sigma S_t\,dW_t ,$$
+```math
+dS_t = r S_t\,dt + \sigma S_t\,dW_t ,
+```
 
 and is simulated with the exact log-Euler scheme (there is no discretisation bias for the terminal value):
 
-$$S_{t+\Delta t} = S_t \exp\!\Big(\big(r - \tfrac{1}{2}\sigma^2\big)\Delta t + \sigma\sqrt{\Delta t}\,Z\Big), \qquad Z \sim \mathcal N(0,1).$$
+```math
+S_{t+\Delta t} = S_t \exp\!\Big(\big(r - \tfrac{1}{2}\sigma^2\big)\Delta t + \sigma\sqrt{\Delta t}\,Z\Big), \qquad Z \sim \mathcal N(0,1).
+```
 
-The price is the discounted mean payoff over $N$ paths, $\hat V = e^{-rT}\,\frac{1}{N}\sum_{i=1}^{N} h\big(S^{(i)}\big)$.
+The price is the discounted mean payoff over $N$ paths, $\hat V = e^{-rT}\frac{1}{N}\sum_{i=1}^{N} h\big(S^{(i)}\big)$.
 
 **Payoffs.** With $A_T = \frac{1}{n+1}\sum_{j=0}^{n} S_{t_j}$ the arithmetic average:
 
@@ -50,7 +54,7 @@ make clean
 
 ## Example output
 
-Inputs: $S_0 = K = 100$, $r = 5\%$, $\sigma = 20\%$, $T = 1$ year. Θ is per year.
+Inputs: S₀ = K = 100, r = 5%, σ = 20%, T = 1 year. Θ is per year.
 
 | | Premium | Δ | Γ | Vega | Θ | ρ |
 |---|---|---|---|---|---|---|
