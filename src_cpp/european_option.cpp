@@ -44,7 +44,8 @@ void OptionEUBS::greeks() {
     ret_contract.vega  = s * std::sqrt(T) * normaldensityfunction(d1);
 
     ret_contract.theta = -(s * sigma * normaldensityfunction(d1)) / (2.0 * std::sqrt(T))
-                         - r * k * std::exp(-r * T) * normalcumfunction(iscall ? d2 : -d2);
+                         + (iscall ? -r * k * std::exp(-r * T) * normalcumfunction(d2)
+                                   :  r * k * std::exp(-r * T) * normalcumfunction(-d2));   // put: +rKe^{-rT}N(-d2)
 
     ret_contract.rho   = iscall
                          ?  k * T * std::exp(-r * T) * normalcumfunction(d2)
