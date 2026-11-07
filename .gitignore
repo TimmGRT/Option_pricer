@@ -1,0 +1,10 @@
+# Build output
+pricer
+*.o
+*.out
+build/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
